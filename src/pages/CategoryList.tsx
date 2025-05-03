@@ -85,14 +85,6 @@ const CategoryList = () => {
         fetchCategories();
     }, []);
 
-    const handleDelete = async (id: number) => {
-        try {
-            await categoryApi.deleteCategory(id);
-            setCategories(categories.filter(category => category.id !== id));
-        } catch (err) {
-            setError('Failed to delete category');
-        }
-    };
 
     return (
         <>
