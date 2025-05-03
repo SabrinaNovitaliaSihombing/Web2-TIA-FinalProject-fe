@@ -1,114 +1,161 @@
-import {
-  Disclosure,
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuItems
-} from "@headlessui/react";
-import { BellIcon } from "@heroicons/react/16/solid";
-import { NavLink } from "react-router-dom";
-import { useAuth } from "../utils/AuthProvider";
-
-const navigation = [{ name: "Post", to: "/posts", current: false }];
-
-function classNames(...classes: string[]) {
-  return classes.filter(Boolean).join(" ");
-}
+import { Link, useNavigate } from 'react-router-dom';
 
 const Navbar = () => {
-  const { logout } = useAuth();
+  const navigate = useNavigate();
+  const isAuthenticated = localStorage.getItem('token');
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    navigate('/login');
+  };
+
   return (
-    <Disclosure as="nav" className="bg-gray-800">
-      <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
-        <div className="relative flex h-16 items-center justify-between">
-          <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
-            <div className="flex shrink-0 items-center">
-              <img
-                alt="Your Company"
-                src="https://tailwindui.com/plus-assets/img/logos/mark.svg?color=indigo&shade=500"
-                className="h-8 w-auto"
-              />
+    <nav className="bg-white shadow-lg">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between h-16">
+          <div className="flex">
+            <div className="flex-shrink-0 flex items-center">
+              <Link to="/" className="text-xl font-bold text-gray-800">
+                Tugasku
+              </Link>
             </div>
-            <div className="hidden sm:ml-6 sm:block">
-              <div className="flex space-x-4">
-                {navigation.map((item) => (
-                  <NavLink
-                    to={item.to}
-                    key={item.name}
-                    className={({ isActive }) => {
-                      return classNames(
-                        isActive
-                          ? "bg-gray-900 text-white"
-                          : "text-gray-300 hover:bg-gray-700 hover:text-white",
-                        "rounded-md px-3 py-2 text-sm font-medium"
-                      );
-                    }}
-                  >
-                    {item.name}
-                  </NavLink>
-                ))}
-              </div>
+            <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
+              <Link
+                to="/"
+                className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+              >
+                Home
+              </Link>
+              <Link
+                to="/tasks"
+                className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+              >
+                Tasks
+              </Link>
+              <Link
+                to="/notes"
+                className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+              >
+                Notes
+              </Link>
+              <Link
+                to="/categories"
+                className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+              >
+                Categories
+              </Link>
             </div>
           </div>
-          <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
+          <div className="hidden sm:ml-6 sm:flex sm:items-center">
+            {isAuthenticated ? (
+              <div className="flex items-center space-x-4">
+                <button
+                  onClick={handleLogout}
+                  className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200"
+                >
+                  Logout
+                </button>
+              </div>
+            ) : (
+              <div className="flex items-center space-x-4">
+                <Link
+                  to="/login"
+                  className="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium"
+                >
+                  Login
+                </Link>
+                <Link
+                  to="/register"
+                  className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200"
+                >
+                  Register
+                </Link>
+              </div>
+            )}
+          </div>
+          <div className="-mr-2 flex items-center sm:hidden">
             <button
               type="button"
-              className="relative rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800 focus:outline-hidden"
+              className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500"
+              aria-controls="mobile-menu"
+              aria-expanded="false"
             >
-              <span className="absolute -inset-1.5" />
-              <span className="sr-only">View notifications</span>
-              <BellIcon aria-hidden="true" className="size-6" />
-            </button>
-
-            {/* Profile dropdown */}
-            <Menu as="div" className="relative ml-3">
-              <div>
-                <MenuButton className="relative flex rounded-full bg-gray-800 text-sm focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800 focus:outline-hidden">
-                  <span className="absolute -inset-1.5" />
-                  <span className="sr-only">Open user menu</span>
-                  <img
-                    alt=""
-                    src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                    className="size-8 rounded-full"
-                  />
-                </MenuButton>
-              </div>
-              <MenuItems
-                transition
-                className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 ring-1 shadow-lg ring-black/5 transition focus:outline-hidden data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-75 data-leave:ease-in"
+              <span className="sr-only">Open main menu</span>
+              <svg
+                className="block h-6 w-6"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                aria-hidden="true"
               >
-                <MenuItem>
-                  <a
-                    href="#"
-                    className="block px-4 py-2 text-sm text-gray-700 data-focus:bg-gray-100 data-focus:outline-hidden"
-                  >
-                    Your Profile
-                  </a>
-                </MenuItem>
-                <MenuItem>
-                  <a
-                    href="#"
-                    className="block px-4 py-2 text-sm text-gray-700 data-focus:bg-gray-100 data-focus:outline-hidden"
-                  >
-                    Settings
-                  </a>
-                </MenuItem>
-                <MenuItem>
-                  <a
-                    onClick={() => {
-                      logout();
-                    }}
-                    className="block px-4 py-2 text-sm text-gray-700 data-focus:bg-gray-100 data-focus:outline-hidden"
-                  >
-                    Sign out
-                  </a>
-                </MenuItem>
-              </MenuItems>
-            </Menu>
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M4 6h16M4 12h16M4 18h16"
+                />
+              </svg>
+            </button>
           </div>
         </div>
       </div>
-    </Disclosure>
+
+      {/* Mobile menu */}
+      <div className="sm:hidden" id="mobile-menu">
+        <div className="pt-2 pb-3 space-y-1">
+          <Link
+            to="/tasks"
+            className="block pl-3 pr-4 py-2 border-l-4 border-transparent text-base font-medium text-gray-500 hover:text-gray-700 hover:bg-gray-50 hover:border-gray-300"
+          >
+            Tasks
+          </Link>
+          <Link
+            to="/notes"
+            className="block pl-3 pr-4 py-2 border-l-4 border-transparent text-base font-medium text-gray-500 hover:text-gray-700 hover:bg-gray-50 hover:border-gray-300"
+          >
+            Notes
+          </Link>
+          <Link
+            to="/categories"
+            className="block pl-3 pr-4 py-2 border-l-4 border-transparent text-base font-medium text-gray-500 hover:text-gray-700 hover:bg-gray-50 hover:border-gray-300"
+          >
+            Categories
+          </Link>
+          {isAuthenticated ? (
+            <>
+              <Link
+                to="/profile"
+                className="block pl-3 pr-4 py-2 border-l-4 border-transparent text-base font-medium text-gray-500 hover:text-gray-700 hover:bg-gray-50 hover:border-gray-300"
+              >
+                Profile
+              </Link>
+              <button
+                onClick={handleLogout}
+                className="block w-full text-left pl-3 pr-4 py-2 border-l-4 border-transparent text-base font-medium text-red-500 hover:text-red-700 hover:bg-gray-50 hover:border-red-300"
+              >
+                Logout
+              </button>
+            </>
+          ) : (
+            <>
+              <Link
+                to="/login"
+                className="block pl-3 pr-4 py-2 border-l-4 border-transparent text-base font-medium text-gray-500 hover:text-gray-700 hover:bg-gray-50 hover:border-gray-300"
+              >
+                Login
+              </Link>
+              <Link
+                to="/register"
+                className="block pl-3 pr-4 py-2 border-l-4 border-transparent text-base font-medium text-blue-500 hover:text-blue-700 hover:bg-gray-50 hover:border-blue-300"
+              >
+                Register
+              </Link>
+            </>
+          )}
+        </div>
+      </div>
+    </nav>
   );
 };
 
